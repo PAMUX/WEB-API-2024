@@ -8,6 +8,6 @@ router.get('/locations', getTrainLocations);
 
 // Protected routes (authentication required)
 router.post('/locations', addTrainLocation);
-router.get('/locations/:id', authenticateToken, getTrainLocationById);
+router.get('/locations/:id', getTrainLocationById);
 
 module.exports = router;
