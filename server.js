@@ -1,4 +1,6 @@
 const express = require('express');
+const http = require('http');
+const socketIo = require('socket.io');
 const connectDB = require('./config/db');
 const apiRoutes = require('./routes/api');
 const cors = require('cors');
@@ -6,6 +8,8 @@ const morgan = require('morgan');
 require('dotenv').config();
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
 
 // Connect to Database
 connectDB();
@@ -18,6 +22,19 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api', apiRoutes);
 
+// Root Route
+app.get('/', (req, res) => {
+  res.send('Welcome to the Sri Lanka Railways Tracking API!');
+});
+
+// Socket.io setup
+io.on('connection', (socket) => {
+  console.log('A user connected');
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
 // Error Handling Middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -26,4 +43,4 @@ app.use((err, req, res, next) => {
 
 // Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
